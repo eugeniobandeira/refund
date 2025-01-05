@@ -5,6 +5,7 @@ const category = document.getElementById('category');
 
 const expenseList =  document.querySelector('ul');
 const expenseQuantity = document.querySelector('aside header p span');
+const totalExpense = document.querySelector('aside header h2');
 
 amount.oninput = () => {
     let value = amount.value.replace(/\D/g, '');
@@ -15,12 +16,10 @@ amount.oninput = () => {
 };
 
 function formatCurrencyBRL(value) {
-    value.toLocaleString('pt-BR', {
+    return value.toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL'
     });
-
-    return value;
 }
 
 form.onsubmit = (event) => {
@@ -83,12 +82,32 @@ function addExpense(newExpense) {
 function updateTotals() {
     try {
         const items = expenseList.children;
-        expenseQuantity.textContent = `${items.length} ${items.length > 1 
+        expenseQuantity.textContent = `${items.length} ${items.length === 1 
             ? 'despesa'
             : 'despesas'
         }`;
 
+        let total = 0;
+
+        for (const element of items) {
+            const itemAmount = element.querySelector('.expense-amount');
+
+            let value = itemAmount
+                .textContent
+                .replace(/[^\d,]/g, '')
+                .replace(',', '.');  
+
+            value = parseFloat(value);
+
+            if (isNaN(value)) {
+                return alert('Não foi possível calcular o total. O valor não é um número válido.');
+            }
+
+            total += value;
+        }
+
+        totalExpense.innerHTML = `<small>R$</small>${formatCurrencyBRL(total).replace('R$', '')}`;
     } catch (error) {
-        console.error(error);      
+        console.error('Error when updating total value: ', error);      
     }
 }
