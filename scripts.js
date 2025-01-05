@@ -73,6 +73,7 @@ function addExpense(newExpense) {
        expenseList.append(expenseItem);
 
        updateTotals();
+       clearForm();
 
     } catch (error) {
         console.error(error);       
@@ -120,3 +121,11 @@ expenseList.addEventListener('click', (event) => {
     }
     updateTotals();
 });
+
+function clearForm() {
+    amount.value = '';
+    expense.value = '';
+    category.value = '';
+
+    expense.focus();
+}
